@@ -40,18 +40,32 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script>
+    
+    function saveSchedule(event) {
+
+      const row = $(event.target).parents('.row')[0]​
+      const textarea = $($(row).children()[1]).children('textarea');​
+      const userInput = $(textarea).val()​
+
+      const key = $(textarea).attr('data-time');​
+
+      localStorage.setItem(key, userInput);​
+    }
+
+
+
+
     function createRowTime(time) {
 
       const row = $('<div>');
 
       row.attr('class', 'row');
 
-      //
+
       const timeColumn = $('<div>', 'col');
       timeColumn.text(time)
 
 
-      //
       const textColumn = $('<div>', 'col');
 
 
@@ -61,9 +75,6 @@
       textArea.attr('rows', 1);
 
       textColumn.append(textArea)
-
-
-
 
       //button
       const buttonCol = $('<div>', 'col');
@@ -94,14 +105,22 @@
 
       //current time
       const currentTime = moment();
-      console.log(currentTime);
+      const lowerBoundary = currentTime.startOf('hour');
+      const upperBoundary = lowerBoundary.clone().add(1, 'hour');
+
 
       for (let index = 0; index < times.length; index++) {
         const time = times[index];
 
-        const row = createRowTime(time);
-
         const scheduleTime = moment(time, 'ha')
+
+        let row;
+
+        if (currentTime < lowerBoundary) {
+          // block 'past' class
+          row = createRowTime(time, 'past');
+        }
+
 
 
 
